@@ -69,7 +69,7 @@ class SpeakingController extends Controller
         ]);
 
         return response()->json([
-            'attempt' => $attempt,
+            'attempt' => $attempt->load('question'),
         ]);
     }
 

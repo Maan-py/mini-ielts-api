@@ -49,6 +49,24 @@ onMounted(async () => {
                 </span>
             </div>
 
+            <!-- Score Banner Card -->
+            <div class="rounded-xl border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-6 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wider text-blue-600">Estimated Band Score</p>
+                        <div class="mt-1 flex items-baseline gap-2">
+                            <span class="text-4xl font-extrabold text-blue-900">
+                                {{ attempt.estimated_band !== null && attempt.estimated_band !== undefined ? attempt.estimated_band : "N/A" }}
+                            </span>
+                            <span class="text-lg font-medium text-gray-500">/ 9.0</span>
+                        </div>
+                    </div>
+                    <div class="flex h-16 w-16 items-center justify-center rounded-full bg-blue-600 font-bold text-white shadow-md text-xl">
+                        {{ attempt.estimated_band ?? "?" }}
+                    </div>
+                </div>
+            </div>
+
             <div class="rounded-lg border border-gray-200 bg-white p-4">
                 <h3 class="mb-2 text-sm font-semibold uppercase tracking-wide text-gray-500">
                     Question
