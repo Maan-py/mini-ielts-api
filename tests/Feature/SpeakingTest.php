@@ -148,3 +148,57 @@ test("submit without token is rejected", function () {
     $response->assertStatus(401);
     expect(Attempt::count())->toBe(0);
 });
+
+test("user can only view their own attempts list", function () {
+    $user1 = \App\Models\User::factory()->create();
+    $user2 = \App\Models\User::factory()->create();
+    $token1 = $user1->createToken('test')->plainTextToken;
+
+    $question = Question::create([
+        "part" => 1,
+        "topic" => "Hobbies",
+        "prompt" => "What do you like?",
+    ]);
+
+    Attempt::create([
+        "user_id" => $user1->id,
+        "question_id" => $question->id,
+        "answer_text" => "User 1 answer",
+    ]);
+
+    Attempt::create([
+        "user_id" => $user2->id,
+        "question_id" => $question->id,
+        "answer_text" => "User 2 answer",
+    ]);
+
+    $response = $this->withHeader('Authorization', 'Bearer ' . $token1)
+        ->getJson("/api/speaking/attempts");
+
+    $response->assertStatus(200)
+        ->assertJsonCount(1)
+        ->assertJsonPath('0.user_id', $user1->id);
+});
+
+test("user cannot view another user attempt detail", function () {
+    $user1 = \App\Models\User::factory()->create();
+    $user2 = \App\Models\User::factory()->create();
+    $token1 = $user1->createToken('test')->plainTextToken;
+
+    $question = Question::create([
+        "part" => 1,
+        "topic" => "Hobbies",
+        "prompt" => "What do you like?",
+    ]);
+
+    $attemptUser2 = Attempt::create([
+        "user_id" => $user2->id,
+        "question_id" => $question->id,
+        "answer_text" => "User 2 answer",
+    ]);
+
+    $response = $this->withHeader('Authorization', 'Bearer ' . $token1)
+        ->getJson("/api/speaking/attempts/" . $attemptUser2->id);
+
+    $response->assertStatus(404);
+});

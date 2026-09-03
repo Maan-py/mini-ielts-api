@@ -1,11 +1,29 @@
 <script setup lang="ts">
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { findAttempt } from "../lib/storage";
+import { getToken } from "../lib/auth";
+import { Attempt, findAttempt } from "../lib/storage";
 
 const props = defineProps<{ id: string | number }>();
 const router = useRouter();
 
-const attempt = findAttempt(props.id);
+const attempt = ref<Attempt | undefined>(findAttempt(props.id));
+
+onMounted(async () => {
+    try {
+        const token = getToken();
+        if (token) {
+            const response = await fetch(`/api/speaking/attempts/${props.id}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (response.ok) {
+                attempt.value = await response.json();
+            }
+        }
+    } catch {
+        // fallback to local storage
+    }
+});
 </script>
 
 <template>

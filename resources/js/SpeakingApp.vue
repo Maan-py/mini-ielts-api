@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
 import { RouterLink, RouterView, useRouter } from "vue-router";
-import { clearAuth, getToken, getUser } from "./lib/auth";
+import { clearAuth, currentUser, getToken } from "./lib/auth";
 
 const router = useRouter();
-const user = ref(getUser());
 
 async function logout() {
     try {
@@ -19,7 +17,6 @@ async function logout() {
         // ignore network errors on logout
     } finally {
         clearAuth();
-        user.value = null;
         router.push({ name: "login" });
     }
 }
@@ -36,8 +33,8 @@ async function logout() {
                     <RouterLink to="/speaking" class="text-gray-600 hover:text-gray-900">
                         Attempts
                     </RouterLink>
-                    <template v-if="user">
-                        <span class="text-gray-500">{{ user.name }}</span>
+                    <template v-if="currentUser">
+                        <span class="text-gray-500">{{ currentUser.name }}</span>
                         <button
                             @click="logout"
                             class="text-gray-600 hover:text-gray-900"
@@ -45,7 +42,7 @@ async function logout() {
                             Logout
                         </button>
                     </template>
-                    <RouterLink v-else to="/speaking/login" class="text-gray-600 hover:text-gray-900">
+                    <RouterLink v-else :to="{ name: 'login' }" class="text-gray-600 hover:text-gray-900">
                         Login
                     </RouterLink>
                 </div>

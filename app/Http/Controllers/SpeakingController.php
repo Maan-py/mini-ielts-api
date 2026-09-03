@@ -10,6 +10,20 @@ use Laravel\Ai\Enums\Lab;
 
 class SpeakingController extends Controller
 {
+    public function index(Request $request)
+    {
+        $attempts = $request->user()->attempts()->with('question')->latest()->get();
+
+        return response()->json($attempts);
+    }
+
+    public function show(Request $request, $id)
+    {
+        $attempt = $request->user()->attempts()->with('question')->findOrFail($id);
+
+        return response()->json($attempt);
+    }
+
     public function questions()
     {
         $questions = Question::all();

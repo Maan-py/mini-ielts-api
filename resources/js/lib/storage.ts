@@ -1,3 +1,5 @@
+import { currentUser } from "./auth";
+
 export interface Attempt {
     id: number;
     user_id: number | null;
@@ -18,26 +20,37 @@ export interface Attempt {
 
 const STORAGE_KEY = "speaking_attempts";
 
-export function loadAttempts(): Attempt[] {
+export function loadAttempts(userId?: number | null): Attempt[] {
     try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        return raw ? (JSON.parse(raw) as Attempt[]) : [];
+        if (!raw) return [];
+        const attempts = JSON.parse(raw) as Attempt[];
+        const targetId = userId !== undefined ? userId : currentUser.value?.id;
+        if (targetId) {
+            return attempts.filter((a) => a.user_id === targetId);
+        }
+        return attempts;
     } catch {
         return [];
     }
 }
 
 export function saveAttempt(attempt: Attempt): void {
-    const attempts = loadAttempts();
-    const index = attempts.findIndex((a) => a.id === attempt.id);
-    if (index >= 0) {
-        attempts[index] = attempt;
-    } else {
-        attempts.unshift(attempt);
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        const attempts: Attempt[] = raw ? JSON.parse(raw) : [];
+        const index = attempts.findIndex((a) => a.id === attempt.id);
+        if (index >= 0) {
+            attempts[index] = attempt;
+        } else {
+            attempts.unshift(attempt);
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(attempts));
+    } catch {
+        // ignore storage errors
     }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(attempts));
 }
 
-export function findAttempt(id: number | string): Attempt | undefined {
-    return loadAttempts().find((a) => a.id === Number(id));
+export function findAttempt(id: number | string, userId?: number | null): Attempt | undefined {
+    return loadAttempts(userId).find((a) => a.id === Number(id));
 }

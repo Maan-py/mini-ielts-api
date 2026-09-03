@@ -1,3 +1,5 @@
+import { ref } from "vue";
+
 export interface AuthUser {
     id: number;
     name: string;
@@ -20,14 +22,18 @@ export function getUser(): AuthUser | null {
     }
 }
 
+export const currentUser = ref<AuthUser | null>(getUser());
+
 export function setAuth(token: string, user: AuthUser): void {
     localStorage.setItem(TOKEN_KEY, token);
     localStorage.setItem(USER_KEY, JSON.stringify(user));
+    currentUser.value = user;
 }
 
 export function clearAuth(): void {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
+    currentUser.value = null;
 }
 
 export function isAuthenticated(): boolean {

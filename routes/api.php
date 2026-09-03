@@ -12,6 +12,8 @@ Route::get('/user', function (Request $request) {
 Route::get("/speaking/questions", [SpeakingController::class, "questions"]);
 
 Route::middleware("auth:sanctum")->group(function () {
+    Route::get("/speaking/attempts", [SpeakingController::class, "index"]);
+    Route::get("/speaking/attempts/{id}", [SpeakingController::class, "show"]);
     Route::post("/speaking/submit", [SpeakingController::class, "submit"]);
 });
 
