@@ -1,10 +1,7 @@
-import { createInertiaApp } from '@inertiajs/vue3';
+import { createApp } from "vue";
+import SpeakingApp from "./SpeakingApp.vue";
+import router from "./router";
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+import "../css/app.css";
 
-void createInertiaApp({
-    title: (title) => (title ? `${title} - ${appName}` : appName),
-    progress: {
-        color: '#4B5563',
-    },
-});
+createApp(SpeakingApp).use(router).mount("#app");

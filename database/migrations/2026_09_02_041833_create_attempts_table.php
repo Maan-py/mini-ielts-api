@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId("question_id")->constrained()->onDelete("cascade");
 
             $table->text("answer_text");
-            $table->decimal("estimated_band_score", 2, 1)->nullable();
+            $table->decimal("estimated_band", 2, 1)->nullable();
             $table->text("strengths")->nullable();
             $table->text("areas_to_improve")->nullable();
 
