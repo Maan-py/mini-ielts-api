@@ -86,6 +86,16 @@ async function login() {
             >
                 {{ loading ? "Logging in..." : "Login" }}
             </button>
+
+            <p class="text-center text-sm text-gray-500">
+                Don't have an account?
+                <button
+                    @click="router.push({ name: 'register' })"
+                    class="font-medium text-blue-600 hover:underline"
+                >
+                    Register
+                </button>
+            </p>
         </div>
     </div>
 </template>
